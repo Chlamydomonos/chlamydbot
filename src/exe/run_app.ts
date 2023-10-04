@@ -28,6 +28,7 @@ for (const script of scripts) {
 }
 
 app.eventEmitter.finishRegistry();
+app.startPhase2();
 
 process.on('SIGINT', () => {
     console.log('SIGINT received, stopping...');
