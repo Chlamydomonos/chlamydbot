@@ -1,0 +1,9 @@
+{
+    "compilerOptions": {
+        "allowJs": true,
+        "noEmit": true,
+        "checkJs": true,
+        "types": ["./global.d.ts"]
+    },
+    "include": ["./**/*"]
+}
