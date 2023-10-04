@@ -7,7 +7,8 @@ const openaiProxyUrl = require('fs')
 let dynamicKey = '';
 
 chlamydbot.backend.post('/set-dynamic-key', (req, res) => {
-    dynamicKey = req.body.dynamicKey;
+    dynamicKey = req.body.key;
+    console.log('Dynamic key set to', dynamicKey);
     res.status(200).send('OK');
 });
 
@@ -26,7 +27,7 @@ chlamydbot.eventEmitter.onCoreEvent(100, 'mcl:FriendMessage', async (event, list
             event.messageChain[1].text.startsWith('/')
         ) {
             const msg = event.messageChain[1].text;
-            const isSetOpenaiUrl = /^\/set-openai-url (\S+)$/.exec(msg);
+            const isSetOpenaiUrl = /^\/-set-openai-url (\S+)$/.exec(msg);
             if (isSetOpenaiUrl) {
                 chlamydbot.mclHttpClient.send('/sendFriendMessage', {
                     sessionKey: chlamydbot.mclHttpClient.sessionKey,
@@ -84,7 +85,7 @@ chlamydbot.eventEmitter.onCoreEvent(100, 'mcl:FriendMessage', async (event, list
                 listenerData.handled = true;
             }
 
-            const isSetOpenaiKey = /^\/set-openai-key (\S+)$/.exec(msg);
+            const isSetOpenaiKey = /^\/-set-openai-key (\S+)$/.exec(msg);
             if (isSetOpenaiKey) {
                 chlamydbot.mclHttpClient.send('/sendFriendMessage', {
                     sessionKey: chlamydbot.mclHttpClient.sessionKey,
@@ -143,7 +144,7 @@ chlamydbot.eventEmitter.onCoreEvent(100, 'mcl:FriendMessage', async (event, list
                 listenerData.handled = true;
             }
 
-            const isChatApiCall = /^\/chat-api-call\s+([\S\s]+)$/.exec(msg);
+            const isChatApiCall = /^\/-chat-api-call\s+([\S\s]+)$/.exec(msg);
             if (isChatApiCall) {
                 const dataStr = isChatApiCall[1];
                 const data = JSON.parse(dataStr);
