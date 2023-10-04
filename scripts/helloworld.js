@@ -1,4 +1,7 @@
-chlamydbot.eventEmitter.onCoreEvent('mcl:FriendMessage', (event) => {
+console.log("Loading script: helloworld...");
+
+chlamydbot.eventEmitter.onCoreEvent('mcl:FriendMessage', (event) =>
+{
     if (
         event.messageChain.length >= 2 &&
         event.messageChain[1].type == 'Plain' &&
