@@ -1,7 +1,6 @@
-console.log("Loading script: helloworld...");
+console.log('Loading script: helloworld...');
 
-chlamydbot.eventEmitter.onCoreEvent('mcl:FriendMessage', (event) =>
-{
+chlamydbot.eventEmitter.onCoreEvent('mcl:FriendMessage', (event, listenerData) => {
     if (
         event.messageChain.length >= 2 &&
         event.messageChain[1].type == 'Plain' &&
@@ -17,5 +16,7 @@ chlamydbot.eventEmitter.onCoreEvent('mcl:FriendMessage', (event) =>
                 },
             ],
         });
+
+        listenerData.handled = true;
     }
 });
