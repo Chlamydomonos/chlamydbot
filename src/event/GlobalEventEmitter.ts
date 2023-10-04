@@ -8,6 +8,7 @@ type CoreEvent = typeof MCL_EVENT_DICT & typeof MCL_WS_EVENT_DICT & typeof MCL_H
 
 export interface ICoreEventEmitter {
     onCoreEvent<EventName extends keyof CoreEvent>(
+        priority: number,
         eventName: EventName,
         listener: (event: CoreEvent[EventName], listenerData: Record<string, any>) => void,
     ): this;
@@ -23,11 +24,22 @@ export default class GlobalEventEmitter extends EventEmitter implements IGlobalE
         super();
     }
 
+    tempListeners: { priority: number; event: string; listener: (...args: any[]) => any }[] = [];
+
     onCoreEvent<EventName extends keyof CoreEvent>(
+        priority: number,
         eventName: EventName,
         listener: (event: CoreEvent[EventName], listenerData: Record<string, any>) => void,
     ) {
-        return super.on(eventName, listener);
+        this.tempListeners.push({ priority, event: eventName, listener });
+        return this;
+    }
+
+    finishRegistry() {
+        this.tempListeners.sort((a, b) => b.priority - a.priority);
+        for (const listener of this.tempListeners) {
+            this.on(listener.event, listener.listener);
+        }
     }
 
     emit(eventName: string, event: any): boolean {

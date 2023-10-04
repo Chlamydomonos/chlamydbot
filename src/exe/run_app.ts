@@ -27,6 +27,8 @@ for (const script of scripts) {
     require(script);
 }
 
+app.eventEmitter.finishRegistry();
+
 process.on('SIGINT', () => {
     console.log('SIGINT received, stopping...');
     app.stop();
