@@ -4,7 +4,7 @@ import * as path from 'path';
 
 app.start();
 
-(global as any).chlamydbot = { app };
+(global as any).chlamydbot = app;
 
 function listJsFiles(rootDir: string) {
     const result: string[] = [];
