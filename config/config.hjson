@@ -1,0 +1,17 @@
+{
+    # mcl
+    MCL_HOST: mcl
+    MCL_PORT: 8765
+    QQ: 2472884021
+    VERIFY_KEY: CHLAMYDOMONOS
+
+    # backend
+    BACKEND_PORT: 8766
+
+    # db
+    DB_HOST: db
+    DB_PORT: 3306
+    DB_USER: root
+    DB_PASSWORD: 123456
+    DB_DATABASE: bot
+}

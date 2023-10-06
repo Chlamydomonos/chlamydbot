@@ -3,7 +3,7 @@
         "allowJs": true,
         "noEmit": true,
         "checkJs": true,
-        "types": ["./global.d.ts"]
+        "typeRoots": ["./types"]
     },
     "include": ["./**/*"]
 }

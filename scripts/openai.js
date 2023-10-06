@@ -4,11 +4,11 @@ const openaiProxyUrl = require('fs')
     .readFileSync(require('path').resolve(__dirname, 'openai-proxy-url.txt'), 'utf-8')
     .split('\n')[0];
 
-let dynamicKey = '';
+chlamydbot.states.dynamicKey = '';
 
 chlamydbot.backend.post('/set-dynamic-key', (req, res) => {
-    dynamicKey = req.body.key;
-    console.log('Dynamic key set to', dynamicKey);
+    chlamydbot.states.dynamicKey = req.body.key;
+    console.log('Dynamic key set to', chlamydbot.states.dynamicKey);
     res.status(200).send('OK');
 });
 
@@ -16,8 +16,9 @@ chlamydbot.axios.post(`http://${openaiProxyUrl}/update-dynamic-key`);
 
 const ownerQQ = 2457242458;
 
-chlamydbot.eventEmitter.onCoreEvent(100, 'mcl:FriendMessage', async (event, listenerData) => {
+chlamydbot.eventEmitter.onCoreEvent(10, 'mcl:FriendMessage', async (event, listenerData) => {
     const sender = event.sender.id;
+    const dynamicKey = chlamydbot.states.dynamicKey;
 
     // owner commands
     if (sender == ownerQQ) {

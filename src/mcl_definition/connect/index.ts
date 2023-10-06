@@ -1,10 +1,5 @@
 import type { EventObj } from '../event';
-
-const MCL_HOST = 'mcl';
-const MCL_PORT = '8765';
-
-export const QQ = '2472884021';
-export const VERIFY_KEY = 'CHLAMYDOMONOS';
+import { MCL_HOST, MCL_PORT, QQ, VERIFY_KEY } from '../../config';
 
 export interface WsConnectSuccess {
     syncId: '';
