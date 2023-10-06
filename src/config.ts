@@ -1,7 +1,10 @@
 import hjson from 'hjson';
 import * as path from 'path';
+import * as fs from 'fs';
 
-const config = hjson.parse(path.resolve(__dirname, '..', 'config', 'config.hjson'));
+const configPath = path.resolve(__dirname, '..', 'config', 'config.hjson');
+
+const config = hjson.parse(fs.readFileSync(configPath, 'utf-8'));
 
 export const MCL_HOST = config.MCL_HOST as string;
 export const MCL_PORT = config.MCL_PORT as number;
