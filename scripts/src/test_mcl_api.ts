@@ -17,7 +17,12 @@ chlamydbot.eventEmitter.onCoreEvent(100, 'mcl:FriendMessage', async (event, list
     if (isCommand) {
         const method: string | undefined = isCommand[1]?.toUpperCase();
         const path = isCommand[2];
-        const body = isCommand[3];
+        let bodyText = isCommand[3];
+
+        if (bodyText.includes('$session$')) {
+            bodyText = bodyText.replace(/\$session\$/g, chlamydbot.mclHttpClient.sessionKey);
+        }
+        const body = JSON.parse(bodyText);
 
         await chlamydbot.mclHttpClient.send('/sendFriendMessage', {
             sessionKey: chlamydbot.mclHttpClient.sessionKey,
