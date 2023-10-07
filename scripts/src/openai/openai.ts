@@ -88,12 +88,12 @@ async function handleChat(request: any) {
                 },
             ],
         });
-        if (response.data.choices[0].message.content) {
-            response.data.choices[0].message.content = (response.data.choices[0].message.content as string).replace(
-                /\[(?:表情:\s*)(.*)\]/g,
-                (...match) => `[${match[1]}]`,
-            );
-        }
+    }
+    if (response.data.choices[0].message.content) {
+        response.data.choices[0].message.content = (response.data.choices[0].message.content as string).replace(
+            /\[(?:表情:)(.*?)\]/g,
+            (...match) => `[${match[1]}]`,
+        );
     }
     return response;
 }
@@ -513,4 +513,4 @@ chlamydbot.eventEmitter.onCoreEvent(10, 'mcl:FriendMessage', async (event, liste
             return;
         }
     }
-}); // mcl:FriendMessage
+});
