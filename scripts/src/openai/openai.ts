@@ -82,7 +82,9 @@ async function handleChat(request: any) {
             messageChain: [
                 {
                     type: 'Plain',
-                    text: `调试模式：\n${JSON.stringify(response.data)}`,
+                    text: `调试模式：\nrequest：\n\`\`\`json\n${JSON.stringify(
+                        request.data,
+                    )}\n\`\`\`\nresponse：\n\`\`\`json\n${JSON.stringify(response.data)}\`\`\``,
                 },
             ],
         });
@@ -97,7 +99,7 @@ chlamydbot.eventEmitter.onCoreEvent(100, 'mcl:FriendMessage', (event, listenerDa
         if (
             event.messageChain.length >= 2 &&
             event.messageChain[1].type == 'Plain' &&
-            event.messageChain[1].text == '/-debug-openai'
+            event.messageChain[1].text == '/debug-openai'
         ) {
             inDebugMode = !inDebugMode;
             chlamydbot.mclHttpClient.send('/sendFriendMessage', {
@@ -419,19 +421,6 @@ chlamydbot.eventEmitter.onCoreEvent(10, 'mcl:FriendMessage', async (event, liste
                 ],
                 functions: functions[botState]?.filter((value) => value.name != 'get_history') ?? [],
             };
-
-            if (inDebugMode) {
-                await chlamydbot.mclHttpClient.send('/sendFriendMessage', {
-                    sessionKey: chlamydbot.mclHttpClient.sessionKey,
-                    target: ownerQQ,
-                    messageChain: [
-                        {
-                            type: 'Plain',
-                            text: `调试模式：自动发送以下请求：\n${JSON.stringify(newRequest)}`,
-                        },
-                    ],
-                });
-            }
 
             try {
                 const newResponse = await handleChat(newRequest);
