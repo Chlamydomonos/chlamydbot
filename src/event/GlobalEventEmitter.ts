@@ -63,6 +63,9 @@ export default class GlobalEventEmitter extends EventEmitter implements IGlobalE
                 }
                 lastList.push(i);
             }
+            if (lastList.length != 0) {
+                listList.push(lastList);
+            }
 
             const newList: ((...args: any[]) => any)[] = [];
             for (const list of listList) {
