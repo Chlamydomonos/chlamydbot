@@ -1,4 +1,4 @@
-let inParseState = {};
+let inParseState: Record<string, boolean> = {};
 
 chlamydbot.eventEmitter.onCoreEvent(100, 'mcl:FriendMessage', (event, listenerData) => {
     const sender = event.sender.id;

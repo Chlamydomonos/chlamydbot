@@ -21,7 +21,7 @@ function listJsFiles(rootDir: string) {
     return result;
 }
 
-const scripts = listJsFiles(path.resolve(__dirname, '..', '..', 'scripts'));
+const scripts = listJsFiles(path.resolve(__dirname, '..', '..', 'scripts', 'dist', 'src'));
 
 for (const script of scripts) {
     require(script);
