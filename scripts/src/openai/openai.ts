@@ -91,8 +91,8 @@ async function handleChat(request: any) {
     }
     if (response.data.choices[0].message.content) {
         response.data.choices[0].message.content = (response.data.choices[0].message.content as string).replace(
-            /\[(?:表情:)(.*?)\]/g,
-            (...match) => `[${match[1]}]`,
+            /\[表情:(.*?)\]/g,
+            '',
         );
     }
     return response;
