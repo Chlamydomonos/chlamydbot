@@ -326,6 +326,11 @@ chlamydbot.eventEmitter.onCoreEvent(10, 'mcl:FriendMessage', async (event, liste
             })
         ).nickname;
 
+        let senderPrompt = `你现在正在与${senderName}聊天，其QQ号为${sender}。`;
+        if (sender != ownerQQ && senderName != 'Chlamydomonos') {
+            senderPrompt += `注意，${senderName}不是Chlamydomonos，你正在与其他人聊天。`;
+        }
+
         const message = compileFriendMessageChain(event.messageChain);
 
         const botState = await chlamydbot.states.getBotState(sender);
@@ -338,10 +343,7 @@ chlamydbot.eventEmitter.onCoreEvent(10, 'mcl:FriendMessage', async (event, liste
             messages: [
                 {
                     role: 'system',
-                    content:
-                        prompts[botState] +
-                        promptWithoutHistory +
-                        `\n你现在正在与${senderName}聊天，其QQ号为${sender}。`,
+                    content: prompts[botState] + senderPrompt + promptWithoutHistory,
                 },
                 {
                     role: 'user',
@@ -410,10 +412,7 @@ chlamydbot.eventEmitter.onCoreEvent(10, 'mcl:FriendMessage', async (event, liste
                 messages: [
                     {
                         role: 'system',
-                        content:
-                            prompts[botState] +
-                            `你现在正在与${senderName}聊天，其QQ号为${sender}。` +
-                            promptWithHistory,
+                        content: prompts[botState] + senderPrompt + promptWithHistory,
                     },
                     ...history.map((value) => ({
                         role: value.isAssistant ? 'assistant' : 'user',
