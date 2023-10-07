@@ -83,7 +83,7 @@ async function handleChat(request: any) {
                 {
                     type: 'Plain',
                     text: `调试模式：\nrequest：\n\`\`\`json\n${JSON.stringify(
-                        request.data,
+                        request,
                     )}\n\`\`\`\nresponse：\n\`\`\`json\n${JSON.stringify(response.data)}\`\`\``,
                 },
             ],
