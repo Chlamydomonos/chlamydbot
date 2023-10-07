@@ -1,5 +1,6 @@
 declare interface States {
     dynamicKey: string;
+    openAIInDebug: boolean;
     getHistory(sender: number): Promise<
         {
             isAssistant: boolean;

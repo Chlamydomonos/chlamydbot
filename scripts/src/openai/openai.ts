@@ -64,7 +64,7 @@ async function handleErrorInFriendChat(e: any, sender: number, status: 0 | 1) {
     });
 }
 
-let inDebugMode = false;
+chlamydbot.states.openAIInDebug = false;
 
 async function handleChat(request: any) {
     if (request.functions && request.functions.length == 0) {
@@ -75,7 +75,7 @@ async function handleChat(request: any) {
         key: chlamydbot.states.dynamicKey,
         openAIrequest: request,
     });
-    if (response.status == 200 && inDebugMode) {
+    if (response.status == 200 && chlamydbot.states.openAIInDebug) {
         await chlamydbot.mclHttpClient.send('/sendFriendMessage', {
             sessionKey: chlamydbot.mclHttpClient.sessionKey,
             target: ownerQQ,
@@ -101,14 +101,14 @@ chlamydbot.eventEmitter.onCoreEvent(100, 'mcl:FriendMessage', async (event, list
             event.messageChain[1].type == 'Plain' &&
             event.messageChain[1].text == '/debug-openai'
         ) {
-            inDebugMode = !inDebugMode;
+            chlamydbot.states.openAIInDebug = !chlamydbot.states.openAIInDebug;
             await chlamydbot.mclHttpClient.send('/sendFriendMessage', {
                 sessionKey: chlamydbot.mclHttpClient.sessionKey,
                 target: sender,
                 messageChain: [
                     {
                         type: 'Plain',
-                        text: inDebugMode
+                        text: chlamydbot.states.openAIInDebug
                             ? 'Debug模式已启动，将把所有聊天的OpenAI API调用结果发给你。'
                             : 'Debug模式已关闭。',
                     },

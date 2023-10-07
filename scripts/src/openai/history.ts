@@ -99,7 +99,10 @@ function updateHistory(messageList: string, message: string, isAssistant: boolea
         if (currentTokenCount > 2048) {
             break;
         }
-        outList.push(messageListObj[i]);
+        outList.unshift(messageListObj[i]);
+    }
+    if (chlamydbot.states.openAIInDebug) {
+        console.log(JSON.stringify(outList));
     }
     return JSON.stringify(outList);
 }
