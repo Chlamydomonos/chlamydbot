@@ -72,6 +72,10 @@ function handleErrorInFriendChat(e: any, sender: number, status: 0 | 1) {
 let inDebugMode = false;
 
 async function handleChat(request: any) {
+    if (request.functions && request.functions.length == 0) {
+        request.functions = undefined;
+        request.function_call = undefined;
+    }
     const response = await chlamydbot.axios.post(`http://${openaiProxyUrl}/chat`, {
         key: chlamydbot.states.dynamicKey,
         openAIrequest: request,
