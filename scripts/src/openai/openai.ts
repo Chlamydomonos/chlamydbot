@@ -24,7 +24,7 @@ chlamydbot.axios.post(`http://${openaiProxyUrl}/update-dynamic-key`);
 
 const prompts = {
     standard:
-        '你是一个QQ机器人，名叫Chlamydbot。你的主人名叫Chlamydomonos，他的QQ号是2457242458。你的责任是与好友聊天。你应该用天真活泼的语气做出回应，并尽量使用emoji。',
+        '你是一个QQ机器人，名叫Chlamydbot。你的主人名叫Chlamydomonos，他的QQ号是2457242458。注意，你不一定正在和Chlamydomonos聊天，请从这条消息的后续内容推断你在和谁聊天。你的责任是与好友聊天。你应该用天真活泼的语气做出回应，并尽量使用emoji。',
 } as Record<string, string | undefined>;
 
 const promptWithoutHistory =
@@ -410,11 +410,10 @@ chlamydbot.eventEmitter.onCoreEvent(10, 'mcl:FriendMessage', async (event, liste
                 messages: [
                     {
                         role: 'system',
-                        content: prompts[botState] + promptWithHistory,
-                    },
-                    {
-                        role: 'system',
-                        content: `你现在正在与${senderName}聊天，其QQ号为${sender}。`,
+                        content:
+                            prompts[botState] +
+                            `你现在正在与${senderName}聊天，其QQ号为${sender}。` +
+                            promptWithHistory,
                     },
                     ...history.map((value) => ({
                         role: value.isAssistant ? 'assistant' : 'user',
