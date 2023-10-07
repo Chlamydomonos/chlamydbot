@@ -20,7 +20,7 @@ chlamydbot.eventEmitter.onCoreEvent(100, 'mcl:FriendMessage', async (event, list
         let bodyText = isCommand[3];
 
         if (bodyText.includes('$session$')) {
-            bodyText = bodyText.replace(/\$session\$/g, chlamydbot.mclHttpClient.sessionKey);
+            bodyText = bodyText.replace(/\$session\$/g, JSON.stringify(chlamydbot.mclHttpClient.sessionKey));
         }
         const body = JSON.parse(bodyText);
 
