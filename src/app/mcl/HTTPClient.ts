@@ -11,6 +11,7 @@ import {
     Methods,
     UnclearPaths as MclUnclearPaths,
 } from '../../mcl_definition';
+import type { GetPaths as MclGetPaths, PostPaths as MclPostPaths } from '../../mcl_definition/request';
 import type { ReqResBase } from '../../mcl_definition/request/base';
 import EventEmitter from 'node:events';
 
@@ -27,7 +28,29 @@ export const EVENT_DICT = {
     'mcl_http:Error': null as unknown as HTTPError,
 };
 
-type EventDict = typeof EVENT_DICT;
+export type SendedEventDict = {
+    [K in MclAllPaths as `mcl_http:send:${K}`]: K extends MclClearPaths
+        ? K extends MclGetPaths
+            ? {
+                  method: 'GET';
+                  request: Req<MclApi<K, 'GET'>>;
+              }
+            : {
+                  method: 'POST';
+                  request: Req<MclApi<K, 'POST'>>;
+              }
+        :
+              | {
+                    method: 'GET';
+                    request: Req<MclApi<K, 'GET'>>;
+                }
+              | {
+                    method: 'POST';
+                    request: Req<MclApi<K, 'POST'>>;
+                };
+};
+
+type EventDict = typeof EVENT_DICT & SendedEventDict;
 type AllEvents = keyof EventDict;
 
 type EventObj<E extends AllEvents> = E extends keyof EventDict ? EventDict[E] : never;
@@ -49,14 +72,34 @@ export interface IHttpClient {
 
 export class HTTPClient extends EventEmitter implements HttpClientEventEmitter, IHttpClient {
     sessionKey: string = '';
+
+    private async sendAndEmit<T>(path: string, request: any, method: 'GET' | 'POST', wrap: boolean = false) {
+        const url = MCL_HTTP_ROOT + path;
+        this.emit(`mcl_http:send:${path}`, {
+            method,
+            request,
+        });
+
+        if (wrap) {
+            request = { params: request };
+        }
+
+        let result: T;
+        if (method == 'GET') {
+            result = (await axios.get<T>(url, request)).data;
+        } else {
+            result = (await axios.post<T>(url, request)).data;
+        }
+        return result;
+    }
+
     async send<P extends MclAllPaths, M extends Mm<P>, A extends MclApi<P, M>>(path: P, request: Req<A>, method?: M) {
         try {
-            const url = MCL_HTTP_ROOT + path;
             if (mcl_isClear(path)) {
                 if (mcl_canGet(path)) {
-                    return (await axios.get<Res<A>>(url, { params: request })).data;
+                    return await this.sendAndEmit<Res<A>>(path, request, 'GET', true);
                 } else if (mcl_canPost(path)) {
-                    return (await axios.post<Res<A>>(url, request)).data;
+                    return await this.sendAndEmit<Res<A>>(path, request, 'POST');
                 } else {
                     const fd = new FormData();
                     for (const k in request) {
@@ -67,12 +110,12 @@ export class HTTPClient extends EventEmitter implements HttpClientEventEmitter, 
                             fd.append(k, v.toString());
                         }
                     }
-                    return (await axios.post<Res<A>>(url, fd)).data;
+                    return await this.sendAndEmit<Res<A>>(path, fd, 'POST');
                 }
             } else if (method == 'GET') {
-                return (await axios.get<Res<A>>(url, { params: request })).data;
+                return await this.sendAndEmit<Res<A>>(path, request, 'GET', true);
             } else {
-                return (await axios.post<Res<A>>(url, request)).data;
+                return await this.sendAndEmit<Res<A>>(path, request, 'POST');
             }
         } catch (e) {
             if (e instanceof Error) {

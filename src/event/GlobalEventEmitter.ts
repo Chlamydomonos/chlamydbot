@@ -1,10 +1,10 @@
-import { EVENT_DICT as MCL_EVENT_DICT } from '../mcl_definition';
+import { EVENT_DICT as MCL_EVENT_DICT, API_DICT as MCL_API_DICT } from '../mcl_definition';
 import { EVENT_DICT as MCL_WS_EVENT_DICT } from '../app/mcl/WSClient';
-import { EVENT_DICT as MCL_HTTP_EVENT_DICT } from '../app/mcl/HTTPClient';
+import { EVENT_DICT as MCL_HTTP_EVENT_DICT, type SendedEventDict } from '../app/mcl/HTTPClient';
 import app from '../app';
 import EventEmitter from 'node:events';
 
-type CoreEvent = typeof MCL_EVENT_DICT & typeof MCL_WS_EVENT_DICT & typeof MCL_HTTP_EVENT_DICT;
+type CoreEvent = typeof MCL_EVENT_DICT & typeof MCL_WS_EVENT_DICT & typeof MCL_HTTP_EVENT_DICT & SendedEventDict;
 
 export interface ICoreEventEmitter {
     onCoreEvent<EventName extends keyof CoreEvent>(
@@ -57,6 +57,12 @@ export default class GlobalEventEmitter extends EventEmitter implements IGlobalE
 
         for (const i in MCL_HTTP_EVENT_DICT) {
             app.mclHttpClient.on(i, (e) => this.emit(i, e));
+        }
+
+        for (const i in MCL_API_DICT) {
+            const apiPath = i.split('$')[0];
+            const eventName = `mcl_http:send:${apiPath}`;
+            app.mclHttpClient.on(eventName, (e) => this.emit(eventName, e));
         }
     }
 }

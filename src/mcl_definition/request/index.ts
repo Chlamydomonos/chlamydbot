@@ -76,6 +76,7 @@ import type {
     Voice3,
     Voice4,
     Xml,
+    File,
 } from './MsgChainSend';
 import type { About, Bind, BotList, MessageFormId, Release, SessionInfo, Verify } from './Session';
 
@@ -109,7 +110,7 @@ export type MsgChainSend =
     | File
     | MiraiCode;
 
-const API_DICT = {
+export const API_DICT = {
     '/verify$POST': null as unknown as Verify,
     '/bind$POST': null as unknown as Bind,
     '/sessionInfo$GET': null as unknown as SessionInfo,

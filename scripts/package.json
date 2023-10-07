@@ -5,5 +5,8 @@
     },
     "scripts": {
         "build": "tsc --build"
+    },
+    "dependencies": {
+        "gpt-3-encoder": "^1.1.4"
     }
 }

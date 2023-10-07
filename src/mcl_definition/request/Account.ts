@@ -30,7 +30,7 @@ export interface FriendProfileReq extends SessionReqBase {
     target: number;
 }
 
-export interface FriendProfile extends ReqResBase<FriendProfile, Profile> {}
+export interface FriendProfile extends ReqResBase<FriendProfileReq, Profile> {}
 
 export interface MemberProfileReq extends SessionReqBase {
     target: number;
@@ -49,8 +49,7 @@ export interface DeleteFriendReq extends SessionReqBase {
     target: number;
 }
 
-export interface DeleteFriend
-    extends ReqResBase<DeleteFriendReq, ResponseBase> {}
+export interface DeleteFriend extends ReqResBase<DeleteFriendReq, ResponseBase> {}
 
 export interface RespNewFriendRequestEventReq extends SessionReqBase {
     eventId: number;
@@ -60,8 +59,7 @@ export interface RespNewFriendRequestEventReq extends SessionReqBase {
     message: string;
 }
 
-export interface RespNewFriendRequestEvent
-    extends ReqResBase<RespNewFriendRequestEventReq, ResponseBase> {}
+export interface RespNewFriendRequestEvent extends ReqResBase<RespNewFriendRequestEventReq, ResponseBase> {}
 
 export interface RespMemberJoinRequestEventReq extends SessionReqBase {
     eventId: number;
@@ -71,8 +69,7 @@ export interface RespMemberJoinRequestEventReq extends SessionReqBase {
     message: string;
 }
 
-export interface RespMemberJoinRequestEvent
-    extends ReqResBase<RespMemberJoinRequestEventReq, ResponseBase> {}
+export interface RespMemberJoinRequestEvent extends ReqResBase<RespMemberJoinRequestEventReq, ResponseBase> {}
 
 export interface RespBotInvitedJoinGroupRequestEventReq extends SessionReqBase {
     eventId: number;
