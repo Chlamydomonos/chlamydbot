@@ -318,10 +318,9 @@ chlamydbot.eventEmitter.onCoreEvent(10, 'mcl:FriendMessage', async (event, liste
         //#region normal chat
 
         const senderName = (
-            await chlamydbot.mclHttpClient.send('/memberProfile', {
+            await chlamydbot.mclHttpClient.send('/friendProfile', {
                 sessionKey: chlamydbot.mclHttpClient.sessionKey,
                 target: sender,
-                memberId: sender,
             })
         ).nickname;
 
@@ -337,11 +336,10 @@ chlamydbot.eventEmitter.onCoreEvent(10, 'mcl:FriendMessage', async (event, liste
             messages: [
                 {
                     role: 'system',
-                    content: prompts[botState] + promptWithoutHistory,
-                },
-                {
-                    role: 'system',
-                    content: `你现在正在与${senderName}聊天，其QQ号为${sender}。`,
+                    content:
+                        prompts[botState] +
+                        promptWithoutHistory +
+                        `\n你现在正在与${senderName}聊天，其QQ号为${sender}。`,
                 },
                 {
                     role: 'user',
