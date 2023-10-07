@@ -3,11 +3,11 @@ import { ownerQQ } from '../lib/basic';
 const handlingFriendRequests = new Map<number, { fromId: number; groupId: number }>();
 let lastFriendRequestEventId = -1;
 
-chlamydbot.eventEmitter.onCoreEvent(100, 'mcl:NewFriendRequestEvent', (event) => {
+chlamydbot.eventEmitter.onCoreEvent(100, 'mcl:NewFriendRequestEvent', async (event) => {
     const { eventId, fromId, groupId, nick } = event;
     handlingFriendRequests.set(eventId, { fromId, groupId });
     lastFriendRequestEventId = eventId;
-    chlamydbot.mclHttpClient.send('/sendFriendMessage', {
+    await chlamydbot.mclHttpClient.send('/sendFriendMessage', {
         sessionKey: chlamydbot.mclHttpClient.sessionKey,
         target: ownerQQ,
         messageChain: [
@@ -19,7 +19,7 @@ chlamydbot.eventEmitter.onCoreEvent(100, 'mcl:NewFriendRequestEvent', (event) =>
     });
 });
 
-chlamydbot.eventEmitter.onCoreEvent(100, 'mcl:FriendMessage', (event, listenerData) => {
+chlamydbot.eventEmitter.onCoreEvent(100, 'mcl:FriendMessage', async (event, listenerData) => {
     const senderId = event.sender.id;
     const messageChain = event.messageChain;
     if (senderId !== ownerQQ) {
@@ -34,7 +34,7 @@ chlamydbot.eventEmitter.onCoreEvent(100, 'mcl:FriendMessage', (event, listenerDa
     }
     if (firstMessage.text == '/accept') {
         const { fromId, groupId } = handlingFriendRequests.get(lastFriendRequestEventId)!;
-        chlamydbot.mclHttpClient.send('/resp/newFriendRequestEvent', {
+        await chlamydbot.mclHttpClient.send('/resp/newFriendRequestEvent', {
             sessionKey: chlamydbot.mclHttpClient.sessionKey,
             eventId: lastFriendRequestEventId,
             fromId,
@@ -46,7 +46,7 @@ chlamydbot.eventEmitter.onCoreEvent(100, 'mcl:FriendMessage', (event, listenerDa
         listenerData.handled = true;
     } else if (firstMessage.text == '/reject') {
         const { fromId, groupId } = handlingFriendRequests.get(lastFriendRequestEventId)!;
-        chlamydbot.mclHttpClient.send('/resp/newFriendRequestEvent', {
+        await chlamydbot.mclHttpClient.send('/resp/newFriendRequestEvent', {
             sessionKey: chlamydbot.mclHttpClient.sessionKey,
             eventId: lastFriendRequestEventId,
             fromId,
@@ -63,7 +63,7 @@ chlamydbot.eventEmitter.onCoreEvent(100, 'mcl:FriendMessage', (event, listenerDa
         const operate = isCommand[1] == 'accept' ? 0 : 1;
         const eventId = parseInt(isCommand[2]);
         const { fromId, groupId } = handlingFriendRequests.get(eventId)!;
-        chlamydbot.mclHttpClient.send('/resp/newFriendRequestEvent', {
+        await chlamydbot.mclHttpClient.send('/resp/newFriendRequestEvent', {
             sessionKey: chlamydbot.mclHttpClient.sessionKey,
             eventId,
             fromId,

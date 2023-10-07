@@ -44,7 +44,7 @@ const functions = {
 
 //#endregion
 
-function handleErrorInFriendChat(e: any, sender: number, status: 0 | 1) {
+async function handleErrorInFriendChat(e: any, sender: number, status: 0 | 1) {
     let msg: string;
     if (status == 0) {
         msg = '无法连接OpenAI API';
@@ -52,7 +52,7 @@ function handleErrorInFriendChat(e: any, sender: number, status: 0 | 1) {
         msg = 'OpenAI API返回了错误数据';
     }
     const errMsg = e instanceof Error ? e.message : e;
-    chlamydbot.mclHttpClient.send('/sendFriendMessage', {
+    await chlamydbot.mclHttpClient.send('/sendFriendMessage', {
         sessionKey: chlamydbot.mclHttpClient.sessionKey,
         target: sender,
         messageChain: [
@@ -93,7 +93,7 @@ async function handleChat(request: any) {
 }
 
 //debug mode
-chlamydbot.eventEmitter.onCoreEvent(100, 'mcl:FriendMessage', (event, listenerData) => {
+chlamydbot.eventEmitter.onCoreEvent(100, 'mcl:FriendMessage', async (event, listenerData) => {
     const sender = event.sender.id;
     if (sender == ownerQQ) {
         if (
@@ -102,7 +102,7 @@ chlamydbot.eventEmitter.onCoreEvent(100, 'mcl:FriendMessage', (event, listenerDa
             event.messageChain[1].text == '/debug-openai'
         ) {
             inDebugMode = !inDebugMode;
-            chlamydbot.mclHttpClient.send('/sendFriendMessage', {
+            await chlamydbot.mclHttpClient.send('/sendFriendMessage', {
                 sessionKey: chlamydbot.mclHttpClient.sessionKey,
                 target: sender,
                 messageChain: [
@@ -133,7 +133,7 @@ chlamydbot.eventEmitter.onCoreEvent(10, 'mcl:FriendMessage', async (event, liste
             const msg = event.messageChain[1].text;
             const isSetOpenaiUrl = /^\/-set-openai-url (\S+)$/.exec(msg);
             if (isSetOpenaiUrl) {
-                chlamydbot.mclHttpClient.send('/sendFriendMessage', {
+                await chlamydbot.mclHttpClient.send('/sendFriendMessage', {
                     sessionKey: chlamydbot.mclHttpClient.sessionKey,
                     target: sender,
                     messageChain: [
@@ -150,7 +150,7 @@ chlamydbot.eventEmitter.onCoreEvent(10, 'mcl:FriendMessage', async (event, liste
                         url: isSetOpenaiUrl[1],
                     });
                     if (result.status == 200) {
-                        chlamydbot.mclHttpClient.send('/sendFriendMessage', {
+                        await chlamydbot.mclHttpClient.send('/sendFriendMessage', {
                             sessionKey: chlamydbot.mclHttpClient.sessionKey,
                             target: sender,
                             messageChain: [
@@ -161,7 +161,7 @@ chlamydbot.eventEmitter.onCoreEvent(10, 'mcl:FriendMessage', async (event, liste
                             ],
                         });
                     } else {
-                        chlamydbot.mclHttpClient.send('/sendFriendMessage', {
+                        await chlamydbot.mclHttpClient.send('/sendFriendMessage', {
                             sessionKey: chlamydbot.mclHttpClient.sessionKey,
                             target: sender,
                             messageChain: [
@@ -174,7 +174,7 @@ chlamydbot.eventEmitter.onCoreEvent(10, 'mcl:FriendMessage', async (event, liste
                     }
                 } catch (e) {
                     const errMsg = e instanceof Error ? e.message : e;
-                    chlamydbot.mclHttpClient.send('/sendFriendMessage', {
+                    await chlamydbot.mclHttpClient.send('/sendFriendMessage', {
                         sessionKey: chlamydbot.mclHttpClient.sessionKey,
                         target: sender,
                         messageChain: [
@@ -191,7 +191,7 @@ chlamydbot.eventEmitter.onCoreEvent(10, 'mcl:FriendMessage', async (event, liste
 
             const isSetOpenaiKey = /^\/-set-openai-key (\S+)$/.exec(msg);
             if (isSetOpenaiKey) {
-                chlamydbot.mclHttpClient.send('/sendFriendMessage', {
+                await chlamydbot.mclHttpClient.send('/sendFriendMessage', {
                     sessionKey: chlamydbot.mclHttpClient.sessionKey,
                     target: sender,
                     messageChain: [
@@ -209,7 +209,7 @@ chlamydbot.eventEmitter.onCoreEvent(10, 'mcl:FriendMessage', async (event, liste
                     });
 
                     if (result.status == 200) {
-                        chlamydbot.mclHttpClient.send('/sendFriendMessage', {
+                        await chlamydbot.mclHttpClient.send('/sendFriendMessage', {
                             sessionKey: chlamydbot.mclHttpClient.sessionKey,
                             target: sender,
                             messageChain: [
@@ -220,7 +220,7 @@ chlamydbot.eventEmitter.onCoreEvent(10, 'mcl:FriendMessage', async (event, liste
                             ],
                         });
                     } else {
-                        chlamydbot.mclHttpClient.send('/sendFriendMessage', {
+                        await chlamydbot.mclHttpClient.send('/sendFriendMessage', {
                             sessionKey: chlamydbot.mclHttpClient.sessionKey,
                             target: sender,
                             messageChain: [
@@ -233,7 +233,7 @@ chlamydbot.eventEmitter.onCoreEvent(10, 'mcl:FriendMessage', async (event, liste
                     }
                 } catch (e) {
                     const errMsg = e instanceof Error ? e.message : e;
-                    chlamydbot.mclHttpClient.send('/sendFriendMessage', {
+                    await chlamydbot.mclHttpClient.send('/sendFriendMessage', {
                         sessionKey: chlamydbot.mclHttpClient.sessionKey,
                         target: sender,
                         messageChain: [
@@ -253,7 +253,7 @@ chlamydbot.eventEmitter.onCoreEvent(10, 'mcl:FriendMessage', async (event, liste
                 const dataStr = isChatApiCall[1];
                 const data = JSON.parse(dataStr);
 
-                chlamydbot.mclHttpClient.send('/sendFriendMessage', {
+                await chlamydbot.mclHttpClient.send('/sendFriendMessage', {
                     sessionKey: chlamydbot.mclHttpClient.sessionKey,
                     target: sender,
                     messageChain: [
@@ -271,7 +271,7 @@ chlamydbot.eventEmitter.onCoreEvent(10, 'mcl:FriendMessage', async (event, liste
                     });
 
                     if (result.status == 200) {
-                        chlamydbot.mclHttpClient.send('/sendFriendMessage', {
+                        await chlamydbot.mclHttpClient.send('/sendFriendMessage', {
                             sessionKey: chlamydbot.mclHttpClient.sessionKey,
                             target: sender,
                             messageChain: [
@@ -282,7 +282,7 @@ chlamydbot.eventEmitter.onCoreEvent(10, 'mcl:FriendMessage', async (event, liste
                             ],
                         });
                     } else {
-                        chlamydbot.mclHttpClient.send('/sendFriendMessage', {
+                        await chlamydbot.mclHttpClient.send('/sendFriendMessage', {
                             sessionKey: chlamydbot.mclHttpClient.sessionKey,
                             target: sender,
                             messageChain: [
@@ -295,7 +295,7 @@ chlamydbot.eventEmitter.onCoreEvent(10, 'mcl:FriendMessage', async (event, liste
                     }
                 } catch (e) {
                     const errMsg = e instanceof Error ? e.message : e;
-                    chlamydbot.mclHttpClient.send('/sendFriendMessage', {
+                    await chlamydbot.mclHttpClient.send('/sendFriendMessage', {
                         sessionKey: chlamydbot.mclHttpClient.sessionKey,
                         target: sender,
                         messageChain: [
@@ -359,18 +359,19 @@ chlamydbot.eventEmitter.onCoreEvent(10, 'mcl:FriendMessage', async (event, liste
             }
             response = result.data;
         } catch (e) {
-            handleErrorInFriendChat(e, sender, 0);
+            await handleErrorInFriendChat(e, sender, 0);
+            return;
         }
 
         if (!response.choices[0].message) {
-            handleErrorInFriendChat(JSON.stringify(response), sender, 1);
+            await handleErrorInFriendChat(JSON.stringify(response), sender, 1);
             return;
         }
 
         let responseMessage = response.choices[0].message;
 
         if (responseMessage.content) {
-            chlamydbot.mclHttpClient.send('/sendFriendMessage', {
+            await chlamydbot.mclHttpClient.send('/sendFriendMessage', {
                 sessionKey: chlamydbot.mclHttpClient.sessionKey,
                 target: sender,
                 messageChain: [
@@ -389,7 +390,8 @@ chlamydbot.eventEmitter.onCoreEvent(10, 'mcl:FriendMessage', async (event, liste
         //#region no function call (this is an error)
 
         if (!responseMessage.function_call) {
-            handleErrorInFriendChat(JSON.stringify(response), sender, 1);
+            await handleErrorInFriendChat(JSON.stringify(response), sender, 1);
+            return;
         }
 
         //#endregion
@@ -436,7 +438,7 @@ chlamydbot.eventEmitter.onCoreEvent(10, 'mcl:FriendMessage', async (event, liste
                 responseMessage = newResponse.data.choices[0].message;
 
                 if (responseMessage.content) {
-                    chlamydbot.mclHttpClient.send('/sendFriendMessage', {
+                    await chlamydbot.mclHttpClient.send('/sendFriendMessage', {
                         sessionKey: chlamydbot.mclHttpClient.sessionKey,
                         target: sender,
                         messageChain: [
@@ -452,7 +454,8 @@ chlamydbot.eventEmitter.onCoreEvent(10, 'mcl:FriendMessage', async (event, liste
 
                 oldRequest = newRequest;
             } catch (e) {
-                handleErrorInFriendChat(e, sender, typeof e == 'string' ? 1 : 0);
+                await handleErrorInFriendChat(e, sender, typeof e == 'string' ? 1 : 0);
+                return;
             }
         }
 
@@ -464,7 +467,7 @@ chlamydbot.eventEmitter.onCoreEvent(10, 'mcl:FriendMessage', async (event, liste
         }
 
         if (i >= 5) {
-            chlamydbot.mclHttpClient.send('/sendFriendMessage', {
+            await chlamydbot.mclHttpClient.send('/sendFriendMessage', {
                 sessionKey: chlamydbot.mclHttpClient.sessionKey,
                 target: sender,
                 messageChain: [
