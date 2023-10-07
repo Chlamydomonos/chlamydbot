@@ -1,4 +1,4 @@
-const ownerQQ = 2457242458;
+import { ownerQQ } from '../lib/basic';
 
 const handlingFriendRequests = new Map<number, { fromId: number; groupId: number }>();
 let lastFriendRequestEventId = -1;

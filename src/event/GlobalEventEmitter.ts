@@ -6,6 +6,12 @@ import EventEmitter from 'node:events';
 
 type CoreEvent = typeof MCL_EVENT_DICT & typeof MCL_WS_EVENT_DICT & typeof MCL_HTTP_EVENT_DICT & SendedEventDict;
 
+interface ListenerWithEvent {
+    priority: number;
+    listener: (...args: any[]) => any;
+    event: string;
+}
+
 export interface ICoreEventEmitter {
     onCoreEvent<EventName extends keyof CoreEvent>(
         priority: number,
@@ -24,7 +30,7 @@ export default class GlobalEventEmitter extends EventEmitter implements IGlobalE
         super();
     }
 
-    tempListeners: { priority: number; event: string; listener: (...args: any[]) => any }[] = [];
+    private tempListeners: ListenerWithEvent[] = [];
 
     onCoreEvent<EventName extends keyof CoreEvent>(
         priority: number,
@@ -37,8 +43,45 @@ export default class GlobalEventEmitter extends EventEmitter implements IGlobalE
 
     finishRegistry() {
         this.tempListeners.sort((a, b) => b.priority - a.priority);
-        for (const listener of this.tempListeners) {
-            this.on(listener.event, listener.listener);
+        const mappedListeners = new Map<string, ListenerWithEvent[]>();
+        for (const i of this.tempListeners) {
+            if (!mappedListeners.has(i.event)) {
+                mappedListeners.set(i.event, []);
+            }
+            mappedListeners.get(i.event)!.push(i);
+        }
+
+        for (const [eventName, listeners] of mappedListeners) {
+            const listList: ListenerWithEvent[][] = [];
+            let lastList: ListenerWithEvent[] = [];
+            let lastPriority = listeners[0].priority;
+            for (const i of listeners) {
+                if (i.priority != lastPriority) {
+                    lastPriority = i.priority;
+                    listList.push(lastList);
+                    lastList = [];
+                }
+                lastList.push(i);
+            }
+
+            const newList: ((...args: any[]) => any)[] = [];
+            for (const list of listList) {
+                newList.push(async (...args: any[]) => {
+                    const results: any[] = [];
+                    for (const i of list) {
+                        results.push(i.listener(...args));
+                    }
+                    await Promise.all(results);
+                });
+            }
+
+            const finalListener = async (...args: any[]) => {
+                for (const i of newList) {
+                    await i(...args);
+                }
+            };
+
+            super.on(eventName, finalListener);
         }
     }
 
