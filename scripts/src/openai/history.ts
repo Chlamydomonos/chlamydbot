@@ -388,3 +388,26 @@ chlamydbot.states.setBotState = async (sender: number, state: string) => {
     senderObj.botState = state;
     await senderObj.save();
 };
+
+chlamydbot.states.resetMemory = async (sender: number) => {
+    let senderObj = await Sender.findOne({
+        where: {
+            qq: sender,
+        },
+    });
+    if (!senderObj) {
+        const senderName = (
+            await chlamydbot.mclHttpClient.send('/friendProfile', {
+                sessionKey: chlamydbot.mclHttpClient.sessionKey,
+                target: sender,
+            })
+        ).nickname;
+        senderObj = Sender.build({
+            qq: sender,
+            name: senderName,
+            messageList: '[]',
+        });
+    }
+    senderObj.messageList = '[]';
+    await senderObj.save();
+};

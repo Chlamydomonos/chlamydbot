@@ -9,4 +9,5 @@ declare interface States {
     >;
     getBotState(sender: number): Promise<string>;
     setBotState(sender: number, state: string): Promise<void>;
+    resetMemory(sender: number): Promise<void>;
 }

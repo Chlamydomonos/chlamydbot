@@ -1,6 +1,6 @@
 import * as fs from 'fs';
 import { compileFriendMessageChain } from '../../lib/openai';
-import { ownerQQ } from '../../lib/basic';
+import { ownerQQ, sleep } from '../../lib/basic';
 
 console.log('Loading script: openai...');
 
@@ -310,7 +310,36 @@ chlamydbot.eventEmitter.onCoreEvent(10, 'mcl:FriendMessage', async (event, liste
                 listenerData.handled = true;
             }
         }
-    } // owner commands
+    }
+
+    // not owner commands
+    do {
+        if (event.messageChain.length < 2) {
+            break;
+        }
+        const firstMessage = event.messageChain[1];
+        if (firstMessage.type != 'Plain') {
+            break;
+        }
+        if (firstMessage.text == '/reset') {
+            await chlamydbot.mclHttpClient.send('/sendFriendMessage', {
+                sessionKey: chlamydbot.mclHttpClient.sessionKey,
+                target: sender,
+                messageChain: [
+                    {
+                        type: 'Plain',
+                        text: `记忆已重置。`,
+                    },
+                ],
+            });
+
+            await sleep(100);
+
+            await chlamydbot.states.resetMemory(sender);
+
+            listenerData.handled = true;
+        }
+    } while (0);
 
     if (listenerData.handled) {
         return;
