@@ -28,7 +28,7 @@ Sender.init(
             autoIncrement: true,
         },
         qq: {
-            type: DataTypes.INTEGER,
+            type: DataTypes.INTEGER.UNSIGNED,
             allowNull: false,
         },
         name: {
@@ -40,7 +40,7 @@ Sender.init(
             allowNull: true,
         },
         messageList: {
-            type: DataTypes.STRING,
+            type: DataTypes.TEXT,
             allowNull: false,
         },
         botState: {
@@ -62,7 +62,7 @@ Group.init(
             autoIncrement: true,
         },
         qq: {
-            type: DataTypes.INTEGER,
+            type: DataTypes.INTEGER.UNSIGNED,
             allowNull: false,
         },
         name: {
@@ -74,7 +74,7 @@ Group.init(
             allowNull: true,
         },
         messageList: {
-            type: DataTypes.STRING,
+            type: DataTypes.TEXT,
             allowNull: false,
         },
         botState: {

@@ -363,7 +363,7 @@ chlamydbot.eventEmitter.onCoreEvent(10, 'mcl:FriendMessage', async (event, liste
                 messages: [
                     {
                         role: 'system',
-                        content: prompts[botState],
+                        content: prompts[botState] + promptWithHistory,
                     },
                     {
                         role: 'system',

@@ -79,6 +79,7 @@ export class App implements IApp {
         console.log('Starting db connector...');
         try {
             await dbConnector.authenticate();
+            await dbConnector.sync();
         } catch (e) {
             console.log(`Start db connector failed: ${e}`);
             this.stop();
