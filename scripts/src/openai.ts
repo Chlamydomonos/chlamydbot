@@ -1,8 +1,8 @@
+import * as fs from 'fs';
+
 console.log('Loading script: openai...');
 
-const openaiProxyUrl = require('fs')
-    .readFileSync(require('path').resolve(__dirname, 'openai-proxy-url.txt'), 'utf-8')
-    .split('\n')[0];
+const openaiProxyUrl = fs.readFileSync(chlamydbot.getFile('openai-proxy-url.txt'), 'utf-8').split('\n')[0];
 
 chlamydbot.states.dynamicKey = '';
 

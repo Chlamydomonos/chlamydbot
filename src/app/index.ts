@@ -10,6 +10,8 @@ import backend from './backend';
 import { QQ, VERIFY_KEY } from '../config';
 import dbConnector from './db/DBConnector';
 
+import * as path from 'path';
+
 export interface IApp {
     mclHttpClient: IHttpClient;
     eventEmitter: ICoreEventEmitter;
@@ -17,6 +19,7 @@ export interface IApp {
     states: Record<string, any>;
     backend: typeof backend;
     dbConnector: typeof dbConnector;
+    getFile: (path: string) => string;
 }
 
 export class App implements IApp {
@@ -91,6 +94,10 @@ export class App implements IApp {
 
         console.log('Stopping mcl ws client...');
         this.mclWsClient.stop();
+    }
+
+    getFile(filePath: string) {
+        return path.resolve(__dirname, '..', '..', 'files', filePath);
     }
 }
 
