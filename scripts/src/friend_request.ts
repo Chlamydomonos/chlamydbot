@@ -13,7 +13,7 @@ chlamydbot.eventEmitter.onCoreEvent(100, 'mcl:NewFriendRequestEvent', (event) =>
         messageChain: [
             {
                 type: 'Plain',
-                text: `收到来自${nick}(${fromId})的好友请求。`,
+                text: `收到来自${nick}(${fromId})的好友请求，事件ID为${eventId}。`,
             },
         ],
     });

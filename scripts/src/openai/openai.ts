@@ -24,7 +24,7 @@ chlamydbot.axios.post(`http://${openaiProxyUrl}/update-dynamic-key`);
 
 const prompts = {
     standard:
-        '你是一个QQ机器人，名叫Chlamydbot。你的主人名叫Chlamydomonos，他的QQ号是2457242458。你的责任是与好友聊天。你应该用可爱的语气做出回应，并尽量使用emoji。',
+        '你是一个QQ机器人，名叫Chlamydbot。你的主人名叫Chlamydomonos，他的QQ号是2457242458。你的责任是与好友聊天。你应该用天真活泼的语气做出回应，并尽量使用emoji。',
 } as Record<string, string | undefined>;
 
 const promptWithoutHistory =
