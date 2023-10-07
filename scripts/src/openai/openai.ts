@@ -63,7 +63,7 @@ function handleErrorInFriendChat(e: any, sender: number, status: 0 | 1) {
         messageChain: [
             {
                 type: 'Plain',
-                text: `${status}，请把以下消息发给Chlamydomonos以确认情况：\n${errMsg}`,
+                text: `${msg}，请把以下消息发给Chlamydomonos以确认情况：\n${errMsg}`,
             },
         ],
     });
@@ -422,6 +422,19 @@ chlamydbot.eventEmitter.onCoreEvent(10, 'mcl:FriendMessage', async (event, liste
                 ],
                 functions: functions[botState]?.filter((value) => value.name != 'get_history') ?? [],
             };
+
+            if (inDebugMode) {
+                await chlamydbot.mclHttpClient.send('/sendFriendMessage', {
+                    sessionKey: chlamydbot.mclHttpClient.sessionKey,
+                    target: ownerQQ,
+                    messageChain: [
+                        {
+                            type: 'Plain',
+                            text: `调试模式：自动发送以下请求：\n${JSON.stringify(newRequest)}`,
+                        },
+                    ],
+                });
+            }
 
             try {
                 const newResponse = await handleChat(newRequest);
