@@ -69,6 +69,55 @@ function handleErrorInFriendChat(e: any, sender: number, status: 0 | 1) {
     });
 }
 
+let inDebugMode = false;
+
+async function handleChat(request: any) {
+    const response = await chlamydbot.axios.post(`http://${openaiProxyUrl}/chat`, {
+        key: chlamydbot.states.dynamicKey,
+        openAIrequest: request,
+    });
+    if (response.status == 200 && inDebugMode) {
+        await chlamydbot.mclHttpClient.send('/sendFriendMessage', {
+            sessionKey: chlamydbot.mclHttpClient.sessionKey,
+            target: ownerQQ,
+            messageChain: [
+                {
+                    type: 'Plain',
+                    text: `调试模式：\n${JSON.stringify(response.data)}`,
+                },
+            ],
+        });
+    }
+    return response;
+}
+
+//debug mode
+chlamydbot.eventEmitter.onCoreEvent(100, 'mcl:FriendMessage', (event, listenerData) => {
+    const sender = event.sender.id;
+    if (sender == ownerQQ) {
+        if (
+            event.messageChain.length >= 2 &&
+            event.messageChain[1].type == 'Plain' &&
+            event.messageChain[1].text == '/-debug-openai'
+        ) {
+            inDebugMode = !inDebugMode;
+            chlamydbot.mclHttpClient.send('/sendFriendMessage', {
+                sessionKey: chlamydbot.mclHttpClient.sessionKey,
+                target: sender,
+                messageChain: [
+                    {
+                        type: 'Plain',
+                        text: inDebugMode
+                            ? 'Debug模式已启动，将把所有聊天的OpenAI API调用结果发给你。'
+                            : 'Debug模式已关闭。',
+                    },
+                ],
+            });
+            listenerData.handled = true;
+        }
+    }
+});
+
 chlamydbot.eventEmitter.onCoreEvent(10, 'mcl:FriendMessage', async (event, listenerData) => {
     const sender = event.sender.id;
     const dynamicKey = chlamydbot.states.dynamicKey;
@@ -305,10 +354,7 @@ chlamydbot.eventEmitter.onCoreEvent(10, 'mcl:FriendMessage', async (event, liste
 
         let response: any;
         try {
-            const result = await chlamydbot.axios.post(`http://${openaiProxyUrl}/chat`, {
-                key: dynamicKey,
-                openAIrequest: request,
-            });
+            const result = await handleChat(request);
             if (result.status != 200) {
                 throw new Error(`OpenAI API返回了${result.status}`);
             }
@@ -378,10 +424,7 @@ chlamydbot.eventEmitter.onCoreEvent(10, 'mcl:FriendMessage', async (event, liste
             };
 
             try {
-                const newResponse = await chlamydbot.axios.post(`http://${openaiProxyUrl}/chat`, {
-                    key: dynamicKey,
-                    openAIrequest: newRequest,
-                });
+                const newResponse = await handleChat(newRequest);
 
                 if (newResponse.status != 200) {
                     throw new Error(`OpenAI API返回了${newResponse.status}`);
